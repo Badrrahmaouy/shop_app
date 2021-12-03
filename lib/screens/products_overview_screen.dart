@@ -10,11 +10,14 @@ import '../widgets/app_drawer.dart';
 enum FilterOptions { Favorites, All }
 
 class ProductsOverviewScreen extends StatefulWidget {
+  static const routeName = '/';
+
   @override
   State<ProductsOverviewScreen> createState() => _ProductsOverviewScreenState();
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+
   var _showOnlyFavorites = false;
 
   @override
@@ -24,6 +27,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         title: Text('MyShop'),
         actions: [
           PopupMenuButton(
+            icon: Icon(Icons.more_vert),
             onSelected: (FilterOptions selectedValue) {
               setState(() {
                 if (selectedValue == FilterOptions.Favorites) {
@@ -43,7 +47,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 value: FilterOptions.All,
               )
             ],
-            icon: Icon(Icons.more_vert),
           ),
           Consumer<Cart>(
             builder: (_, cart, ch) => Badge(
@@ -61,7 +64,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ),
         ],
       ),
-			drawer: AppDrawer(),
+      drawer: AppDrawer(),
       body: ProductsGrid(_showOnlyFavorites),
     );
   }
