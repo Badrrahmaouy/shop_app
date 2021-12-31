@@ -22,21 +22,29 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  Future<void> toggleFavoriteStatus(String id, bool isFav) async {
-    isFavorite = !isFav;
+  void _setFavValue(bool newValue) {
+    isFavorite = newValue;
+    notifyListeners();
+  }
+
+  Future<void> toggleFavoriteStatus(String authToken, String userId) async {
+    final oldStatus = isFavorite;
+    isFavorite = !isFavorite;
     notifyListeners();
     final url = Uri.parse(
-        'https://shopapp-29edc-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
-    final response = await http.patch(
-      url,
-      body: json.encode({
-        'isFavorite': !isFav,
-      }),
-    );
-    if (response.statusCode >= 400) {
-      isFavorite = !isFavorite;
-      notifyListeners();
-      throw HttpException('Could not toggle favorite.');
-    }
+        'https://shopapp-29edc-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId/$id.json?auth=$authToken');
+    try {
+      final response = await http.put(
+        url,
+        body: json.encode(isFavorite),
+      );
+      if (response.statusCode >= 400) {
+        _setFavValue(oldStatus);
+        notifyListeners();
+        throw HttpException('Could not toggle favorite.');
+      }
+    } catch (e) {
+			_setFavValue(oldStatus);
+		}
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/product.dart';
+import '../provider/auth.dart';
 import '../provider/cart.dart';
+import '../provider/product.dart';
 import '../screens/product_detail_screen.dart';
 
 class ProductItem extends StatelessWidget {
@@ -17,6 +18,7 @@ class ProductItem extends StatelessWidget {
     final scaffold = ScaffoldMessenger.of(context);
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -42,7 +44,8 @@ class ProductItem extends StatelessWidget {
               ),
               onPressed: () async {
                 try {
-                  await product.toggleFavoriteStatus(product.id, product.isFavorite);
+                  await product.toggleFavoriteStatus(
+                      authData.token, authData.userId);
                 } catch (e) {
                   scaffold.showSnackBar(SnackBar(
                     content: Text('Toggle failed!'),
